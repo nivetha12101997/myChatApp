@@ -2,19 +2,33 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'r
 import React, { useEffect, useState } from 'react';
 import { styles } from '../styles/Chatscreen_styles.js';
 import { chatData } from '../dummyData/ChatData.js';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 
 export const Chatscreen = (props) => {
     console.log("ChatScreen props", props.route.params);
     const { chatName } = props.route.params;
     const [message, setMessage] = useState('');
+    const [chatMessages, setChatMessages] = useState(chatData);
+
         useEffect(() => {
         console.log(chatName);
-        const filteredMessage= chatData.filter((item) => item.name === chatName);
+        const filteredMessage= chatMessages.filter((item) => item.name === chatName);
         
-        setMessage(filteredMessage[0].messages);
+        setChatMessages(filteredMessage[0].messages);
         console.log("Filtered Messages:", filteredMessage);
     }, [chatName]);
+
+    const sentMessage=(message)=>{
+        const newMessage = {
+            text: message,
+            timestamp: new Date().toLocaleTimeString(),
+            sender: 'You'
+        };
+        setChatMessages(prev=>[...prev, newMessage]);
+        setMessage('');
+
+    }
 
     const renderChatBubble = ({ item }) => {
         console.log("Chat Bubble Item:", item);
@@ -31,17 +45,20 @@ export const Chatscreen = (props) => {
         <View>
             {/* <Text>ChatScreen for {chatName} </Text> */}
             <View>
-                <FlatList style={styles.chatScreen_container} data={message} renderItem={renderChatBubble} keyExtractor={(item,index) =>index } />
+                <FlatList style={styles.chatScreen_container} data={chatMessages} renderItem={renderChatBubble} keyExtractor={(item,index) =>index } />
             </View>
-            {/* <TextInput
+            <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
+            <TextInput
                 style={styles.input}
                 placeholder="Type a message"
                 value={message}
                 onChangeText={setMessage}
             />
-            <TouchableOpacity style={styles.button} onPress={() => console.log('Send message:', message)}>
+            <TouchableOpacity style={styles.button} onPress={() => sentMessage(message)}>
                 <Text style={styles.buttonText}>Send</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
+            </View>
+
         </View>
     )
 }

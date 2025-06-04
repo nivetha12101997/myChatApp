@@ -24,4 +24,11 @@ export const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         backgroundColor: '#ECE5DD',
     },
+    input: {
+        flex: 1,
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: '#f0f0f0',
+        marginRight: 10,
+    },
 });
